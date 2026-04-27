@@ -50,7 +50,7 @@ No source code is copied from these projects. The code here uses public APIs and
 python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
-pip install -r requirements.txt
+pip install -r requirements-mac.txt
 ```
 
 PyTorch will use CUDA if available, then MPS on Apple Silicon, then CPU.
@@ -289,48 +289,58 @@ Note on `--adaptive-monotonic`: because Hugging Face attention still requires fl
 
 The benchmark supports `--device auto`, which chooses CUDA first, then Apple MPS if available, then CPU. On Windows, MPS is not available, so `auto` chooses CUDA if `torch.cuda.is_available()` is true and CPU otherwise. The selected device is printed at runtime in the `Loading ... on <device>` line.
 
-## Quick Start On macOS
+## Run On A Mac
 
-Use this for Apple Silicon MPS or CPU-only Mac runs. Do not install CUDA-only packages on Mac.
+Use this section for a fresh Apple Silicon or CPU-only Mac. Run all commands from the repo root. Do not install CUDA-only packages on Mac.
+
+1. Create the environment:
 
 ```bash
-cd /Users/adityaagarwal/Desktop/kvcache
 python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements-mac.txt
-python scripts/smoke_test.py
-bash scripts/run_mac_smoke.sh
 ```
 
-Mac full benchmark:
+2. Run the local smoke test. This does not download a model:
 
 ```bash
-bash scripts/run_mac_full.sh
+python scripts/smoke_test.py
 ```
 
-The Mac full script defaults to `Qwen/Qwen2.5-3B`. If your Mac runs out of memory or becomes too slow, use the smaller model:
+3. Run a small benchmark with Tiny GPT-2. This downloads a small Hugging Face model and writes results to `results/tiny_gpt2`:
+
+```bash
+python benchmarks/benchmark.py \
+  --model-name sshleifer/tiny-gpt2 \
+  --seq-lens 128 256 \
+  --generated-tokens 16 \
+  --batch-size 1 \
+  --block-size 16 \
+  --mode baseline,int8,blocked_int8,adaptive \
+  --measure-accuracy true \
+  --accuracy-steps 16 \
+  --device auto \
+  --output-dir results/tiny_gpt2
+```
+
+4. Generate plots for that run:
+
+```bash
+python benchmarks/plot_results.py \
+  --summary results/tiny_gpt2/summary_runs.csv \
+  --output-dir results/tiny_gpt2/plots
+```
+
+`--summary` points to the CSV produced by the benchmark. `--output-dir` controls where plot PNGs are written. Use a new output directory, such as `results/tiny_gpt2`, when generating your own test results so they do not mix with previous runs.
+
+5. Optional larger Mac run:
 
 ```bash
 MODEL_NAME=Qwen/Qwen2.5-1.5B bash scripts/run_mac_full.sh
 ```
 
-Equivalent direct Mac command:
-
-```bash
-python benchmarks/benchmark.py \
-  --model-name Qwen/Qwen2.5-1.5B \
-  --seq-lens 128 256 512 \
-  --generated-tokens 32 \
-  --batch-size 1 \
-  --block-size 16 \
-  --run-adaptive-ablations true \
-  --measure-accuracy true \
-  --accuracy-steps 16 \
-  --adaptive-monotonic true \
-  --device auto \
-  --output-dir results/mac_qwen
-```
+The full Mac script writes to `results/mac_full`. If it is too slow or runs out of memory, use a smaller model such as `Qwen/Qwen2.5-0.5B` or reduce `--seq-lens` / `--generated-tokens`.
 
 ## Quick Start On Google Colab
 
