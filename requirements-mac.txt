@@ -1,0 +1,14 @@
+# macOS CPU / Apple Silicon MPS setup
+# Recommended install:
+#   python3 -m venv .venv
+#   source .venv/bin/activate
+#   pip install --upgrade pip
+#   pip install -r requirements-mac.txt
+# PyTorch's standard pip wheel supports CPU and MPS on modern macOS.
+torch>=2.1
+transformers>=4.40
+accelerate>=0.29
+numpy>=1.24
+pandas>=2.0
+tqdm>=4.66
+matplotlib>=3.7

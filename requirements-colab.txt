@@ -1,0 +1,12 @@
+# Google Colab / Kaggle GPU setup.
+# Colab usually preinstalls torch with CUDA. This file keeps the CUDA stack simple.
+torch>=2.1
+transformers>=4.40
+accelerate>=0.29
+bitsandbytes>=0.43
+numpy>=1.24
+pandas>=2.0
+tqdm>=4.66
+matplotlib>=3.7
+scipy>=1.10
+scikit-learn>=1.3

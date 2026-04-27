@@ -1,0 +1,23 @@
+# Windows setup.
+# CPU-only quick install:
+#   py -m venv .venv
+#   .\.venv\Scripts\Activate.ps1
+#   python -m pip install --upgrade pip
+#   pip install -r requirements-windows.txt
+#
+# NVIDIA CUDA users: install the PyTorch wheel matching your CUDA version first.
+# Example for CUDA 12.1:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+# Then install the rest:
+#   pip install -r requirements-windows.txt
+#
+# bitsandbytes support on Windows can be limited, so it is intentionally optional.
+torch>=2.1
+transformers>=4.40
+accelerate>=0.29
+numpy>=1.24
+pandas>=2.0
+tqdm>=4.66
+matplotlib>=3.7
+scipy>=1.10
+scikit-learn>=1.3

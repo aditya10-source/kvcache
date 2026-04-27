@@ -1,0 +1,11 @@
+# Cross-platform core dependencies. For platform-specific setup, see:
+# - requirements-mac.txt
+# - requirements-colab.txt
+# - requirements-windows.txt
+torch>=2.1
+transformers>=4.40
+accelerate>=0.29
+numpy>=1.24
+pandas>=2.0
+tqdm>=4.66
+matplotlib>=3.7
