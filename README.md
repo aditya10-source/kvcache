@@ -354,7 +354,7 @@ In Colab, choose `Runtime > Change runtime type > GPU`, then run:
 !bash scripts/run_colab_smoke.sh
 ```
 
-Full Colab run:
+Full Colab run. By default this uses `Qwen/Qwen2.5-3B`, sequence lengths `128 256 512 1024`, 64 generated tokens, CUDA, and writes to `results/colab_full`:
 
 ```bash
 !bash scripts/run_colab_full.sh
@@ -365,6 +365,26 @@ If Qwen2.5-3B does not fit in free Colab GPU memory, use Qwen2.5-1.5B:
 ```bash
 !MODEL_NAME=Qwen/Qwen2.5-1.5B bash scripts/run_colab_full.sh
 ```
+
+For a larger model on Colab, use a separate output directory and consider 4-bit model weights:
+
+```bash
+!MODEL_NAME=Qwen/Qwen2.5-7B \
+  LOAD_IN_4BIT=true \
+  OUTPUT_DIR=results/colab_qwen7b \
+  SEQ_LENS="128 256 512" \
+  GENERATED_TOKENS=32 \
+  bash scripts/run_colab_full.sh
+```
+
+The Colab script accepts these environment variables:
+
+- `MODEL_NAME`: Hugging Face causal LM id
+- `OUTPUT_DIR`: where CSV, JSON, raw timing files, and quick plots are saved
+- `SEQ_LENS`: space-separated prompt lengths
+- `GENERATED_TOKENS`: number of decode tokens per run
+- `ACCURACY_STEPS`: number of decode steps used for logit accuracy metrics
+- `LOAD_IN_4BIT=true`: enables `--load-in-4bit` for CUDA runs with bitsandbytes
 
 Equivalent direct Colab command:
 
@@ -384,6 +404,14 @@ python benchmarks/benchmark.py \
 ```
 
 A complete notebook version is available at `notebooks/colab_demo.ipynb`. It installs dependencies, checks `nvidia-smi`, runs smoke/full benchmarks, plots results, and zips the results for download.
+
+Plot a specific Colab run by pointing `--summary` at that run's `summary_runs.csv` and writing plots into the same output directory:
+
+```bash
+!python benchmarks/plot_results.py \
+  --summary results/colab_qwen7b/summary_runs.csv \
+  --output-dir results/colab_qwen7b/plots
+```
 
 ## Quick Start On Windows
 
